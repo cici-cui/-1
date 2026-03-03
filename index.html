@@ -40,15 +40,13 @@
     .tab-pill.active{background:var(--p);color:#fff;font-weight:800}
     .grid2{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
     @media(max-width:420px){.grid2{grid-template-columns:repeat(2,1fr)}}
-    .food{background:var(--card);border-radius:16px;padding:10px 10px 8px;box-shadow:var(--shadow);position:relative;min-height:110px;transition:transform .18s ease;display:flex;flex-direction:column;gap:4px;align-items:center;text-align:center}
+    .food{background:var(--card);border-radius:16px;padding:8px;box-shadow:var(--shadow);position:relative;min-height:96px;transition:transform .18s ease}
     .food:active{transform:scale(.98)}
     .food .emoji{font-size:26px;text-align:center} .food .name{font-weight:800;font-size:14px;text-align:center}
     .tag{font-size:10px;padding:2px 6px;border-radius:999px;display:inline-block}
     .tag.ok{background:#e7f7ee;color:#2e8b57} .tag.warn{background:#fff2d6;color:#c47d00;animation:blink 1.2s infinite} .tag.bad{background:#ffe0e0;color:#c0392b}
-    .food-meta{display:flex;align-items:center;justify-content:space-between;gap:6px;width:100%;margin-top:auto}
-    .acts{display:flex;gap:6px}
-    .icon{border:1px solid #e6e6e6;background:transparent;border-radius:10px;padding:2px 6px;cursor:pointer;min-height:28px;font-size:12px;color:var(--m)}
-    .icon.danger{border-color:#f5c1c1;color:var(--danger)}
+    .acts{position:absolute;top:6px;right:6px;display:flex;gap:4px;opacity:.6}
+    .icon{border:1px solid #e6e6e6;background:transparent;border-radius:6px;padding:2px 4px;cursor:pointer;min-height:22px;font-size:11px;color:var(--m)}
     #soonList .row{font-size:12px}
     .search{display:flex;gap:8px;margin-bottom:10px} .search input{width:100%;padding:12px 14px;border-radius:14px;border:1px solid #e3e3e3;font-size:14px;min-height:44px;background:var(--card);color:var(--t)}
     .empty{text-align:center;padding:30px 10px;color:var(--m)} .empty .emoji{font-size:40px}
@@ -57,8 +55,8 @@
     .form input,.form select,.form textarea{width:100%;padding:10px 12px;border-radius:12px;border:1px solid #e2e2e2;font-size:14px;min-height:44px;background:var(--card);color:var(--t)}
     .upload{border:2px dashed #d8d8d8;border-radius:16px;padding:16px;text-align:center;color:var(--m)}
     .preview{width:100%;border-radius:16px;margin-top:10px}
-    .subtabs{display:flex;gap:8px;margin-bottom:10px;overflow-x:auto;padding-bottom:6px;flex-wrap:nowrap;-webkit-overflow-scrolling:touch}
-    .sub{padding:8px 12px;border-radius:999px;background:#f1f1f1;cursor:pointer;min-height:44px;display:inline-flex;align-items:center;white-space:nowrap;flex:0 0 auto}
+    .subtabs{display:flex;gap:8px;margin-bottom:10px;overflow-x:auto;flex-wrap:nowrap;-webkit-overflow-scrolling:touch}
+    .sub{padding:8px 12px;border-radius:999px;background:#f1f1f1;cursor:pointer;min-height:44px;display:inline-flex;align-items:center;white-space:nowrap}
     .sub.active{background:var(--p);color:#fff;font-weight:800}
     .line{display:flex;align-items:center;gap:10px;padding:10px;border-radius:14px;background:var(--card);box-shadow:var(--shadow);margin-bottom:8px;cursor:pointer;transition:transform .18s ease}
     .line:active{transform:scale(.99)}
@@ -401,16 +399,10 @@
       if(q) list=list.filter(f=>f.name.includes(q));
       if(!list.length){$("#fridgeList").innerHTML=`<div class="empty"><div class="emoji">🧊</div><div>冰箱空空的</div><button class="btn" id="goAddBtn">去添加</button></div>`;$("#goAddBtn")?.addEventListener("click",()=>go("manage"));return}
       $("#fridgeList").innerHTML=`<div class="grid2">${list.map(f=>{const st=statusTag(f);return `<div class="food" data-food="${f.id}">
-          <div class="emoji">${f.emoji||"🍽️"}</div>
-          <div class="name">${f.name}</div>
-          <div class="food-meta">
-            <div class="tag ${st.cls}">${st.text}</div>
-            <div class="acts">
-              <button class="icon" data-edit="${f.id}">✏️</button>
-              <button class="icon danger" data-del="${f.id}">🗑️</button>
-            </div>
-          </div>
-        </div>`}).join("")}</div>`;
+        <div class="acts"><button class="icon" data-edit="${f.id}">✏️</button><button class="icon" data-del="${f.id}">❌</button></div>
+        <div class="emoji">${f.emoji||"🍽️"}</div><div class="name">${f.name}</div>
+        <div class="tag ${st.cls}">${st.text}</div>
+      </div>`}).join("")}</div>`;
       $$("#fridgeList [data-edit]").forEach(el=>el.onclick=()=>{editId=Number(el.dataset.edit);manageTab="✏️手动录入";go("manage")});
       $$("#fridgeList [data-del]").forEach(el=>el.onclick=()=>confirmBox("确定删除该食材吗？",()=>{const id=Number(el.dataset.del);state.fridge=state.fridge.filter(f=>f.id!==id);saveState();renderAll();toast("已删除")}));
       $$("#fridgeList [data-food]").forEach(el=>el.addEventListener("click",(e)=>{if(e.target.closest(".acts"))return;openFoodModal(Number(el.dataset.food));}));
